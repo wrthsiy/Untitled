@@ -1,0 +1,409 @@
+print("this works only in some games that have a knife or anything that can kill")
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+
+-- GUI Setup
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "KillAllGUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = game:GetService("CoreGui")
+
+-- Main Frame
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 320, 0, 400)
+MainFrame.Position = UDim2.new(0.5, -160, 0.5, -200)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+
+-- Title Bar
+local TitleBar = Instance.new("Frame")
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+TitleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TitleBar.BorderSizePixel = 0
+TitleBar.Parent = MainFrame
+
+-- Title
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -30, 1, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "🔪 KILL ALL"
+Title.TextColor3 = Color3.fromRGB(255, 50, 50)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 18
+Title.Parent = TitleBar
+
+-- Close Button
+local CloseButton = Instance.new("TextButton")
+CloseButton.Position = UDim2.new(1, -30, 0, 0)
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+CloseButton.BorderSizePixel = 0
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.SourceSansBold
+CloseButton.TextSize = 18
+CloseButton.Parent = TitleBar
+
+-- Status Label
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Position = UDim2.new(0, 10, 0, 40)
+StatusLabel.Size = UDim2.new(1, -20, 0, 25)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = "Выберите цели для убийства"
+StatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+StatusLabel.Font = Enum.Font.SourceSans
+StatusLabel.TextSize = 14
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+StatusLabel.Parent = MainFrame
+
+-- Player Selection Frame
+local SelectionFrame = Instance.new("Frame")
+SelectionFrame.Position = UDim2.new(0, 10, 0, 70)
+SelectionFrame.Size = UDim2.new(1, -20, 0, 220)
+SelectionFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+SelectionFrame.BorderSizePixel = 0
+SelectionFrame.Parent = MainFrame
+
+-- Player List ScrollFrame
+local PlayerScrollFrame = Instance.new("ScrollingFrame")
+PlayerScrollFrame.Position = UDim2.new(0, 5, 0, 5)
+PlayerScrollFrame.Size = UDim2.new(1, -10, 1, -10)
+PlayerScrollFrame.BackgroundTransparency = 1
+PlayerScrollFrame.BorderSizePixel = 0
+PlayerScrollFrame.ScrollBarThickness = 6
+PlayerScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+PlayerScrollFrame.Parent = SelectionFrame
+
+-- Buttons Frame
+local ButtonsFrame = Instance.new("Frame")
+ButtonsFrame.Position = UDim2.new(0, 10, 0, 300)
+ButtonsFrame.Size = UDim2.new(1, -20, 0, 90)
+ButtonsFrame.BackgroundTransparency = 1
+ButtonsFrame.Parent = MainFrame
+
+-- Start Kill Button
+local StartButton = Instance.new("TextButton")
+StartButton.Position = UDim2.new(0, 0, 0, 0)
+StartButton.Size = UDim2.new(0.5, -5, 0, 40)
+StartButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+StartButton.BorderSizePixel = 0
+StartButton.Text = "🔴 START KILL"
+StartButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+StartButton.Font = Enum.Font.SourceSansBold
+StartButton.TextSize = 16
+StartButton.Parent = ButtonsFrame
+
+-- Stop Kill Button
+local StopButton = Instance.new("TextButton")
+StopButton.Position = UDim2.new(0.5, 5, 0, 0)
+StopButton.Size = UDim2.new(0.5, -5, 0, 40)
+StopButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+StopButton.BorderSizePixel = 0
+StopButton.Text = "⏹ STOP"
+StopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+StopButton.Font = Enum.Font.SourceSansBold
+StopButton.TextSize = 16
+StopButton.Parent = ButtonsFrame
+
+-- Select All Button
+local SelectAllButton = Instance.new("TextButton")
+SelectAllButton.Position = UDim2.new(0, 0, 0, 45)
+SelectAllButton.Size = UDim2.new(0.5, -5, 0, 35)
+SelectAllButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+SelectAllButton.BorderSizePixel = 0
+SelectAllButton.Text = "✅ ВЫБРАТЬ ВСЕХ"
+SelectAllButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SelectAllButton.Font = Enum.Font.SourceSans
+SelectAllButton.TextSize = 14
+SelectAllButton.Parent = ButtonsFrame
+
+-- Deselect All Button
+local DeselectAllButton = Instance.new("TextButton")
+DeselectAllButton.Position = UDim2.new(0.5, 5, 0, 45)
+DeselectAllButton.Size = UDim2.new(0.5, -5, 0, 35)
+DeselectAllButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+DeselectAllButton.BorderSizePixel = 0
+DeselectAllButton.Text = "❌ УБРАТЬ ВСЕХ"
+DeselectAllButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+DeselectAllButton.Font = Enum.Font.SourceSans
+DeselectAllButton.TextSize = 14
+DeselectAllButton.Parent = ButtonsFrame
+
+-- Variables
+local SelectedTargets = {}
+local PlayerCheckboxes = {}
+local KillActive = false
+local KillThread = nil
+
+-- Function to get player skin/avatar display
+local function GetPlayerDisplay(player)
+    local char = player.Character
+    if not char then return "🚫" end
+    
+    -- Try to get a display icon based on character
+    local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
+    if torso then
+        local color = torso.BrickColor
+        if color then
+            return "🟦" -- Default display
+        end
+    end
+    
+    -- Check for accessories
+    local hat = char:FindFirstChildOfClass("Accessory")
+    if hat then
+        return "🎩"
+    end
+    
+    return "🧑"
+end
+
+-- Function to update player list
+local function RefreshPlayerList()
+    for _, child in pairs(PlayerScrollFrame:GetChildren()) do
+        child:Destroy()
+    end
+    PlayerCheckboxes = {}
+    
+    local PlayerList = Players:GetPlayers()
+    table.sort(PlayerList, function(a, b) return a.Name:lower() < b.Name:lower() end)
+    
+    local yPosition = 5
+    for _, target in ipairs(PlayerList) do
+        if target ~= player then
+            local PlayerEntry = Instance.new("Frame")
+            PlayerEntry.Size = UDim2.new(1, -10, 0, 35)
+            PlayerEntry.Position = UDim2.new(0, 5, 0, yPosition)
+            PlayerEntry.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            PlayerEntry.BorderSizePixel = 0
+            PlayerEntry.Parent = PlayerScrollFrame
+            
+            -- Checkbox
+            local Checkbox = Instance.new("TextButton")
+            Checkbox.Size = UDim2.new(0, 24, 0, 24)
+            Checkbox.Position = UDim2.new(0, 3, 0.5, -12)
+            Checkbox.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+            Checkbox.BorderSizePixel = 0
+            Checkbox.Text = ""
+            Checkbox.Parent = PlayerEntry
+            
+            -- Checkmark
+            local Checkmark = Instance.new("TextLabel")
+            Checkmark.Size = UDim2.new(1, 0, 1, 0)
+            Checkmark.BackgroundTransparency = 1
+            Checkmark.Text = "✓"
+            Checkmark.TextColor3 = Color3.fromRGB(0, 255, 0)
+            Checkmark.TextSize = 18
+            Checkmark.Font = Enum.Font.SourceSansBold
+            Checkmark.Visible = SelectedTargets[target.Name] ~= nil
+            Checkmark.Parent = Checkbox
+            
+            -- Skin/Display Icon
+            local Icon = Instance.new("TextLabel")
+            Icon.Size = UDim2.new(0, 25, 0, 25)
+            Icon.Position = UDim2.new(0, 32, 0.5, -12)
+            Icon.BackgroundTransparency = 1
+            Icon.Text = GetPlayerDisplay(target)
+            Icon.TextColor3 = Color3.fromRGB(255, 255, 255)
+            Icon.TextSize = 18
+            Icon.Parent = PlayerEntry
+            
+            -- Player name
+            local NameLabel = Instance.new("TextLabel")
+            NameLabel.Size = UDim2.new(1, -70, 1, 0)
+            NameLabel.Position = UDim2.new(0, 62, 0, 0)
+            NameLabel.BackgroundTransparency = 1
+            NameLabel.Text = target.Name
+            NameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            NameLabel.TextSize = 16
+            NameLabel.Font = Enum.Font.SourceSans
+            NameLabel.TextXAlignment = Enum.TextXAlignment.Left
+            NameLabel.Parent = PlayerEntry
+            
+            -- Click area
+            local ClickArea = Instance.new("TextButton")
+            ClickArea.Size = UDim2.new(1, 0, 1, 0)
+            ClickArea.BackgroundTransparency = 1
+            ClickArea.Text = ""
+            ClickArea.ZIndex = 2
+            ClickArea.Parent = PlayerEntry
+            
+            ClickArea.MouseButton1Click:Connect(function()
+                if SelectedTargets[target.Name] then
+                    SelectedTargets[target.Name] = nil
+                    Checkmark.Visible = false
+                else
+                    SelectedTargets[target.Name] = target
+                    Checkmark.Visible = true
+                end
+                UpdateStatus()
+            end)
+            
+            PlayerCheckboxes[target.Name] = {
+                Entry = PlayerEntry,
+                Checkmark = Checkmark,
+                Icon = Icon
+            }
+            
+            yPosition = yPosition + 40
+        end
+    end
+    
+    PlayerScrollFrame.CanvasSize = UDim2.new(0, 0, 0, yPosition + 5)
+end
+
+-- Count selected targets
+local function CountSelectedTargets()
+    local count = 0
+    for _ in pairs(SelectedTargets) do
+        count = count + 1
+    end
+    return count
+end
+
+-- Update status display
+local function UpdateStatus()
+    local count = CountSelectedTargets()
+    if KillActive then
+        StatusLabel.Text = "🔪 Убиваем " .. count .. " целей..."
+        StatusLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+    else
+        StatusLabel.Text = count .. " целей выбрано"
+        StatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
+end
+
+-- Toggle all players
+local function ToggleAllPlayers(select)
+    for _, target in ipairs(Players:GetPlayers()) do
+        if target ~= player then
+            local checkboxData = PlayerCheckboxes[target.Name]
+            if checkboxData then
+                if select then
+                    SelectedTargets[target.Name] = target
+                    checkboxData.Checkmark.Visible = true
+                else
+                    SelectedTargets[target.Name] = nil
+                    checkboxData.Checkmark.Visible = false
+                end
+            end
+        end
+    end
+    UpdateStatus()
+end
+
+-- Kill function (from your script)
+local function KillTarget(target)
+    local char = player.Character or player.CharacterAdded:Wait()
+    local knife = char:FindFirstChildOfClass("Tool") or player.Backpack:FindFirstChildOfClass("Tool")
+    
+    if knife and knife.Parent == player.Backpack then
+        knife.Parent = char
+    end
+    
+    if knife and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+        knife:Activate()
+        firetouchinterest(target.Character.HumanoidRootPart, knife.Handle, 0)
+        task.wait(0.02)
+        firetouchinterest(target.Character.HumanoidRootPart, knife.Handle, 1)
+        return true
+    end
+    return false
+end
+
+-- Start killing
+local function StartKill()
+    if KillActive then return end
+    
+    local count = CountSelectedTargets()
+    if count == 0 then
+        StatusLabel.Text = "⚠️ Нет выбранных целей!"
+        task.wait(1)
+        UpdateStatus()
+        return
+    end
+    
+    KillActive = true
+    UpdateStatus()
+    StartButton.BackgroundColor3 = Color3.fromRGB(100, 200, 0)
+    StartButton.Text = "🟢 KILLING..."
+    
+    -- Start kill loop
+    KillThread = task.spawn(function()
+        while KillActive do
+            local validTargets = {}
+            
+            -- Get valid targets
+            for name, target in pairs(SelectedTargets) do
+                if target and target.Parent then
+                    validTargets[name] = target
+                else
+                    SelectedTargets[name] = nil
+                    local checkbox = PlayerCheckboxes[name]
+                    if checkbox then
+                        checkbox.Checkmark.Visible = false
+                    end
+                end
+            end
+            
+            -- Kill each target
+            for _, target in pairs(validTargets) do
+                if KillActive then
+                    pcall(function()
+                        KillTarget(target)
+                    end)
+                    task.wait(0.15)
+                else
+                    break
+                end
+            end
+            
+            UpdateStatus()
+            task.wait(0.1)
+        end
+    end)
+end
+
+-- Stop killing
+local function StopKill()
+    KillActive = false
+    if KillThread then
+        KillThread = nil
+    end
+    StartButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    StartButton.Text = "🔴 START KILL"
+    UpdateStatus()
+end
+
+-- Button connections
+StartButton.MouseButton1Click:Connect(StartKill)
+StopButton.MouseButton1Click:Connect(StopKill)
+SelectAllButton.MouseButton1Click:Connect(function() ToggleAllPlayers(true) end)
+DeselectAllButton.MouseButton1Click:Connect(function() ToggleAllPlayers(false) end)
+
+-- Close button
+CloseButton.MouseButton1Click:Connect(function()
+    StopKill()
+    ScreenGui:Destroy()
+end)
+
+-- Handle player joining/leaving
+Players.PlayerAdded:Connect(RefreshPlayerList)
+Players.PlayerRemoving:Connect(function(target)
+    if SelectedTargets[target.Name] then
+        SelectedTargets[target.Name] = nil
+    end
+    RefreshPlayerList()
+    UpdateStatus()
+end)
+
+-- Initialize
+RefreshPlayerList()
+UpdateStatus()
+
+print("🔪 Kill All GUI loaded!")
